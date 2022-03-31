@@ -1,84 +1,108 @@
 import type { NextPage } from 'next'
+import { useState, useEffect } from 'react'
 import Head from 'next/head'
-import Image from 'next/image'
+import { KeyIcon, LogoutIcon } from '@heroicons/react/outline'
+import { useAddress, useDisconnect, useMetamask } from '@thirdweb-dev/react'
+import Nft from '../components/Nft'
+import Link from 'next/link'
 
 const Home: NextPage = () => {
+  const [isSigningIn, setIsSigningIn] = useState(false)
+  // Auth
+  const connectWithMetamask = useMetamask()
+  const address = useAddress()
+  const disconnect = useDisconnect()
+  // ---
+
+  useEffect(() => {
+    if (address) {
+      setIsSigningIn(false)
+    }
+  }, [address])
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
+    <div className="flex h-screen flex-col overflow-hidden p-8 lg:justify-between">
       <Head>
-        <title>Create Next App</title>
+        <title>Mal NFT Drop</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="flex w-full flex-1 flex-col items-center justify-center px-20 text-center">
-        <h1 className="text-6xl font-bold">
-          Welcome to{' '}
-          <a className="text-blue-600" href="https://nextjs.org">
-            Next.js!
-          </a>
+      {/* Header */}
+      <div>
+        <header className="flex items-center justify-between">
+          <Link href={'/'}>
+            <h1 className="w-52 cursor-pointer text-xl font-extralight sm:w-80">
+              <span className="font-extrabold underline decoration-blue-600/50">
+                Mal
+              </span>{' '}
+              NFT Market Place
+            </h1>
+          </Link>
+          {!address ? (
+            <button
+              onClick={() => {
+                connectWithMetamask()
+                setIsSigningIn(true)
+              }}
+              className="flex items-center rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-800 lg:px-5 lg:py-3 lg:text-base"
+            >
+              {!isSigningIn ? (
+                <div className="flex">
+                  Sign In
+                  <KeyIcon className="h-3 animate-bounce pl-2 lg:h-5" />
+                </div>
+              ) : (
+                <div className="h-3 w-3 animate-spin rounded-full border-t-2 border-white lg:h-5 lg:w-5"></div>
+              )}
+            </button>
+          ) : (
+            <button
+              onClick={() => disconnect()}
+              className="flex items-center rounded-full bg-gray-400 px-4 py-2 text-xs font-bold text-white hover:bg-gray-500 lg:px-5 lg:py-3 lg:text-base"
+            >
+              Sign Out
+              <LogoutIcon className="h-3 animate-bounce pl-2 lg:h-5" />
+            </button>
+          )}
+        </header>
+        <hr className="my-2 border" />
+        {address && (
+          <p className="text-center text-sm text-blue-500">
+            You're logged in with wallet {address.substring(0, 5)}...
+            {address.substring(address.length - 5)}
+          </p>
+        )}
+      </div>
+
+      {/* Content */}
+      <div className="flex flex-col items-center lg:space-y-5">
+        <h1 className="lg: mt-10 text-center text-xl font-bold text-blue-600 lg:mt-0 lg:text-3xl lg:font-extrabold">
+          NFT Drops
         </h1>
 
-        <p className="mt-3 text-2xl">
-          Get started by editing{' '}
-          <code className="rounded-md bg-gray-100 p-3 font-mono text-lg">
-            pages/index.tsx
-          </code>
-        </p>
-
-        <div className="mt-6 flex max-w-4xl flex-wrap items-center justify-around sm:w-full">
-          <a
-            href="https://nextjs.org/docs"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Documentation &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Find in-depth information about Next.js features and API.
-            </p>
-          </a>
-
-          <a
-            href="https://nextjs.org/learn"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Learn &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Learn about Next.js in an interactive course with quizzes!
-            </p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/canary/examples"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Examples &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Discover and deploy boilerplate example Next.js projects.
-            </p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className="mt-6 w-96 rounded-xl border p-6 text-left hover:text-blue-600 focus:text-blue-600"
-          >
-            <h3 className="text-2xl font-bold">Deploy &rarr;</h3>
-            <p className="mt-4 text-xl">
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+        <div className="my-5 flex flex-col space-y-5 rounded-sm shadow-lg scrollbar scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-900 sm:flex-row sm:space-y-0 sm:space-x-5 lg:my-0 lg:w-full lg:overflow-x-scroll lg:p-5">
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          <Nft href="nft/mal-apes" nftName="Mal Apes" />
         </div>
-      </main>
-
-      <footer className="flex h-24 w-full items-center justify-center border-t">
-        <a
-          className="flex items-center justify-center gap-2"
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <Image src="/vercel.svg" alt="Vercel Logo" width={72} height={16} />
-        </a>
-      </footer>
+      </div>
     </div>
   )
 }
