@@ -20,7 +20,7 @@ const Home: NextPage = () => {
     }
   }, [address])
   return (
-    <div className="flex h-screen flex-col overflow-hidden p-8 lg:justify-between">
+    <div className="flex h-screen flex-col p-8 lg:justify-between">
       <Head>
         <title>Mal NFT Drop</title>
         <link rel="icon" href="/favicon.ico" />
