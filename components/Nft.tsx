@@ -5,7 +5,7 @@ const Nft = ({ nftName = '', href = '#' }) => {
     <Link href={href}>
       <div className="relative min-w-max cursor-pointer rounded-xl bg-gradient-to-br from-teal-300 to-yellow-100 p-2 shadow-lg transition-all duration-200 hover:scale-105 hover:from-yellow-100 hover:to-teal-300">
         <img
-          className="w-44 rounded-xl object-cover lg:h-96 lg:w-72"
+          className="w-44 rounded-xl object-cover sm:h-96 sm:w-72"
           src="https://links.papareact.com/8sg"
           alt="mal-apes"
         />
