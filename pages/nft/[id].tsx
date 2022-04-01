@@ -19,7 +19,7 @@ const NFTDropPage = () => {
   }, [address])
 
   return (
-    <div>
+    <div className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-blue-800">
       <Head>
         <title>Mal NFT Drop</title>
         <link rel="icon" href="/favicon.ico" />
