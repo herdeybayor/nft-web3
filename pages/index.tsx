@@ -1,12 +1,18 @@
-import type { NextPage } from 'next'
+import type { NextPage, GetServerSideProps } from 'next'
 import { useState, useEffect } from 'react'
 import Head from 'next/head'
 import { KeyIcon, LogoutIcon } from '@heroicons/react/outline'
 import { useAddress, useDisconnect, useMetamask } from '@thirdweb-dev/react'
 import Nft from '../components/Nft'
 import Link from 'next/link'
+import { urlFor, sanityClient } from '../sanity'
+import { Collection } from '../typings'
 
-const Home: NextPage = () => {
+interface Props {
+  collections: Collection[]
+}
+
+const Home = ({ collections }: Props) => {
   const [isSigningIn, setIsSigningIn] = useState(false)
   // Auth
   const connectWithMetamask = useMetamask()
@@ -22,7 +28,7 @@ const Home: NextPage = () => {
   return (
     <div className="flex h-screen flex-col p-8 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-blue-800 lg:justify-between">
       <Head>
-        <title>Mal NFT Drop</title>
+        <title>Mal NFT Drops</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
@@ -80,27 +86,13 @@ const Home: NextPage = () => {
         </h1>
 
         <div className="my-5 flex flex-row flex-wrap space-y-5 rounded-sm p-5 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-blue-800 sm:w-full sm:flex-row sm:flex-nowrap sm:space-y-0 sm:space-x-5 sm:overflow-x-scroll lg:my-0">
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
-          <Nft href="nft/mal-apes" nftName="Mal Apes" />
+          {collections.map((collection) => (
+            <Nft
+              href={`/nft/${collection.slug.current}`}
+              title={collection.title}
+              img={urlFor(collection.mainImage).url()}
+            />
+          ))}
         </div>
       </div>
     </div>
@@ -108,3 +100,37 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const query = `*[_type == "collection"]{
+  _id,
+  title,
+  description,
+  nftCollectionName,
+  mainImage {
+  asset
+},
+previewImage {
+  asset
+},
+slug {
+  current
+},
+creator-> {
+  _id,
+  name,
+  address,
+  slug {
+  current
+},
+},
+}`
+
+  const collections = await sanityClient.fetch(query)
+
+  return {
+    props: {
+      collections,
+    },
+  }
+}
