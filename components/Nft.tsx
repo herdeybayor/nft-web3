@@ -3,9 +3,9 @@ import Link from 'next/link'
 const Nft = ({ nftName = '', href = '#' }) => {
   return (
     <Link href={href}>
-      <div className="relative min-w-max cursor-pointer rounded-xl bg-gradient-to-br from-teal-300 to-yellow-100 p-2 shadow-lg transition-all duration-200 hover:scale-105 hover:from-yellow-100 hover:to-teal-300">
+      <div className="relative basis-full cursor-pointer rounded-xl bg-gradient-to-br from-teal-300 to-yellow-100 p-2 shadow-lg transition-all duration-200 hover:scale-105 hover:from-yellow-100 hover:to-teal-300 sm:min-w-max sm:basis-0">
         <img
-          className="w-44 rounded-xl object-cover sm:h-96 sm:w-72"
+          className="object-fit rounded-xl sm:h-96 sm:w-72"
           src="https://links.papareact.com/8sg"
           alt="mal-apes"
         />

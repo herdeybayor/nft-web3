@@ -20,7 +20,7 @@ const Home: NextPage = () => {
     }
   }, [address])
   return (
-    <div className="flex h-screen flex-col p-8 lg:justify-between">
+    <div className="flex h-screen flex-col p-8 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-blue-800 lg:justify-between">
       <Head>
         <title>Mal NFT Drop</title>
         <link rel="icon" href="/favicon.ico" />
@@ -74,12 +74,12 @@ const Home: NextPage = () => {
       </div>
 
       {/* Content */}
-      <div className="flex flex-col items-center lg:space-y-5">
+      <div className="flex flex-col items-center overflow-visible lg:space-y-5">
         <h1 className="lg: mt-10 text-center text-xl font-bold text-blue-600 lg:mt-0 lg:text-3xl lg:font-extrabold">
           NFT Drops
         </h1>
 
-        <div className="my-5 flex flex-col space-y-5 rounded-sm shadow-lg scrollbar scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-900 sm:flex-row sm:space-y-0 sm:space-x-5 lg:my-0 lg:w-full lg:overflow-x-scroll lg:p-5">
+        <div className="my-5 flex flex-row flex-wrap space-y-5 rounded-sm p-5 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-blue-800 sm:w-full sm:flex-row sm:flex-nowrap sm:space-y-0 sm:space-x-5 sm:overflow-x-scroll lg:my-0">
           <Nft href="nft/mal-apes" nftName="Mal Apes" />
           <Nft href="nft/mal-apes" nftName="Mal Apes" />
           <Nft href="nft/mal-apes" nftName="Mal Apes" />
