@@ -88,6 +88,7 @@ const Home = ({ collections }: Props) => {
         <div className="my-5 flex flex-row flex-wrap space-y-5 rounded-sm p-5 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-blue-800 sm:w-full sm:flex-row sm:flex-nowrap sm:space-y-0 sm:space-x-5 sm:overflow-x-scroll lg:my-0">
           {collections.map((collection) => (
             <Nft
+              key={collection._id}
               href={`/nft/${collection.slug.current}`}
               title={collection.title}
               img={urlFor(collection.mainImage).url()}
