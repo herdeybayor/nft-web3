@@ -267,7 +267,7 @@ const NFTDropPage = ({ collection }: Props) => {
                     onClick={() => {
                       connectWithMetamask()
                     }}
-                    className="hidden items-center justify-center bg-cyan-600 px-4 py-2 text-xs font-bold text-white hover:bg-cyan-800 lg:flex lg:px-5 lg:py-3 lg:text-base"
+                    className="flex items-center justify-center bg-cyan-600 px-4 py-2 text-xs font-bold text-white hover:bg-cyan-800 lg:px-5 lg:py-3 lg:text-base"
                   >
                     Metamask
                   </button>
