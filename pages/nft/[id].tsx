@@ -144,6 +144,13 @@ const NFTDropPage = ({ collection }: Props) => {
   const connector = new WalletConnect({
     bridge: 'https://bridge.walletconnect.org', // Required
     qrcodeModal: QRCodeModal,
+    // Required
+    clientMeta: {
+      description: 'Get the best NFT Drops',
+      url: 'https://nft-web3.vercel.app',
+      icons: ['https://www.svgrepo.com/show/217770/m.svg'],
+      name: 'Mal NFT Market Place',
+    },
   })
 
   // Check if connection is already established
