@@ -352,7 +352,7 @@ const NFTDropPage = ({ collection }: Props) => {
             ) : claimedSupply === totalSupply?.toNumber() ? (
               <>SOLD OUT</>
             ) : !address ? (
-              <>Sign in to Mint</>
+              <>Connect Wallet to Mint</>
             ) : (
               <span className="font-bold">MINT NFT ({priceInEth} ETH)</span>
             )}
