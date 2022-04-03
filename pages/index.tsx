@@ -43,40 +43,8 @@ const Home = ({ collections }: Props) => {
               NFT Market Place
             </h1>
           </Link>
-          {!address ? (
-            <button
-              onClick={() => {
-                connectWithMetamask()
-                setIsSigningIn(true)
-              }}
-              className="flex items-center rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-800 lg:px-5 lg:py-3 lg:text-base"
-            >
-              {!isSigningIn ? (
-                <div className="flex">
-                  Sign In
-                  <KeyIcon className="h-3 animate-bounce pl-2 lg:h-5" />
-                </div>
-              ) : (
-                <div className="h-3 w-3 animate-spin rounded-full border-t-2 border-white lg:h-5 lg:w-5"></div>
-              )}
-            </button>
-          ) : (
-            <button
-              onClick={() => disconnect()}
-              className="flex items-center rounded-full bg-gray-400 px-4 py-2 text-xs font-bold text-white hover:bg-gray-500 lg:px-5 lg:py-3 lg:text-base"
-            >
-              Sign Out
-              <LogoutIcon className="h-3 animate-bounce pl-2 lg:h-5" />
-            </button>
-          )}
         </header>
         <hr className="my-2 border" />
-        {address && (
-          <p className="text-center text-sm text-blue-500">
-            You're logged in with wallet {address.substring(0, 5)}...
-            {address.substring(address.length - 5)}
-          </p>
-        )}
       </div>
 
       {/* Content */}

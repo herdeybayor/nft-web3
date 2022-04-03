@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Head from 'next/head'
-import { KeyIcon, LogoutIcon } from '@heroicons/react/outline'
+import { ArrowDownIcon, ArrowUpIcon } from '@heroicons/react/solid'
 import {
   useAddress,
   useDisconnect,
@@ -13,18 +13,26 @@ import { sanityClient, urlFor } from '../../sanity'
 import { Collection } from '../../typings'
 import { BigNumber } from 'ethers'
 import toast, { Toaster } from 'react-hot-toast'
+import WalletConnect from '@walletconnect/client'
+import QRCodeModal from '@walletconnect/qrcode-modal'
 
 interface Props {
   collection: Collection
 }
 
 const NFTDropPage = ({ collection }: Props) => {
-  const [isSigningIn, setIsSigningIn] = useState(false)
   const [claimedSupply, setClaimedSupply] = useState<number>(0)
   const [totalSupply, setTotalSupply] = useState<BigNumber>()
   const [loading, setIsLoading] = useState<boolean>(false)
   const [priceInEth, setPriceInEth] = useState('')
+  const [isOpen, setIsOpen] = useState<boolean>(false)
   const nftDrop = useNFTDrop(collection.address)
+  const connectRef = useRef<HTMLDivElement>(null)
+
+  const showOptions = () => {
+    setIsOpen(!isOpen)
+    connectRef.current?.classList.toggle('show__display')
+  }
 
   // Auth
   const connectWithMetamask = useMetamask()
@@ -47,12 +55,6 @@ const NFTDropPage = ({ collection }: Props) => {
     }
     fetchNFTDropData()
   }, [nftDrop])
-
-  useEffect(() => {
-    if (address) {
-      setIsSigningIn(false)
-    }
-  }, [address])
 
   const mintNft = () => {
     if (!nftDrop || !address) return
@@ -77,17 +79,6 @@ const NFTDropPage = ({ collection }: Props) => {
         // const receipt = tx[0].receipt // get transaction receipt
         // const claimedTokenId = tx[0].id // the id of the NFT claimed
         const claimedNFT = await tx[0].data() // (optional) get the claimed NFT metadata
-
-        // toast.success('YAY... You Successfully Minted!!!', {
-        //   duration: 8000,
-        //   style: {
-        //     background: 'green',
-        //     color: 'white',
-        //     fontWeight: 'bolder',
-        //     fontSize: '17px',
-        //     padding: '20px',
-        //   },
-        // })
 
         toast.custom((t) => (
           <div
@@ -127,9 +118,6 @@ const NFTDropPage = ({ collection }: Props) => {
             </div>
           </div>
         ))
-        console.log(claimedNFT)
-        console.log(claimedNFT.metadata.name)
-        console.log(claimedNFT.metadata.image)
       })
       .catch((err) => {
         console.log(err)
@@ -149,6 +137,50 @@ const NFTDropPage = ({ collection }: Props) => {
         toast.dismiss(notification)
       })
   }
+
+  // walletConnect
+
+  // Create a connector
+  const connector = new WalletConnect({
+    bridge: 'https://bridge.walletconnect.org', // Required
+    qrcodeModal: QRCodeModal,
+  })
+
+  // Check if connection is already established
+  const connectWithWallectconnect = () => {
+    if (!connector.connected && !address) {
+      // create new session
+      connector.createSession()
+    }
+  }
+
+  // Subscribe to connection events
+  connector.on('connect', (error, payload) => {
+    if (error) {
+      console.log(error)
+    }
+
+    // Get provided accounts and chainId
+    const { accounts, chainId } = payload.params[0]
+    console.log(payload)
+  })
+
+  connector.on('session_update', (error, payload) => {
+    if (error) {
+      console.log(error)
+    }
+
+    // Get updated accounts and chainId
+    const { accounts, chainId } = payload.params[0]
+  })
+
+  connector.on('disconnect', (error, payload) => {
+    if (error) {
+      console.log(error)
+    }
+
+    // Delete connector
+  })
 
   return (
     <div className="scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-blue-800">
@@ -191,32 +223,60 @@ const NFTDropPage = ({ collection }: Props) => {
                 NFT Market Place
               </h1>
             </Link>
-            {!address ? (
-              <button
+            <div className="relative flex items-center">
+              <div
+                className="cursor-pointer rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-800 lg:px-5 lg:py-3 lg:text-base"
                 onClick={() => {
-                  connectWithMetamask()
-                  setIsSigningIn(true)
+                  showOptions()
                 }}
-                className="flex items-center rounded-full bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-800 lg:px-5 lg:py-3 lg:text-base"
               >
-                {!isSigningIn ? (
-                  <div className="flex">
-                    Sign In
-                    <KeyIcon className="h-3 animate-bounce pl-2 lg:h-5" />
-                  </div>
+                {!address ? (
+                  <span className="flex items-center justify-center">
+                    Connect Wallet{' '}
+                    {!isOpen ? (
+                      <ArrowDownIcon className="ml-2 h-5" />
+                    ) : (
+                      <ArrowUpIcon className="ml-2 h-5" />
+                    )}
+                  </span>
                 ) : (
-                  <div className="h-3 w-3 animate-spin rounded-full border-t-2 border-white lg:h-5 lg:w-5"></div>
+                  <span>
+                    {address.substring(0, 5)}...
+                    {address.substring(address.length - 5)}
+                  </span>
                 )}
-              </button>
-            ) : (
-              <button
-                onClick={() => disconnect()}
-                className="flex items-center rounded-full bg-gray-400 px-4 py-2 text-xs font-bold text-white hover:bg-gray-500 lg:px-5 lg:py-3 lg:text-base"
+              </div>
+              <div
+                ref={connectRef}
+                className="absolute -bottom-10 left-1/2 hidden -translate-x-1/2 flex-col lg:-bottom-28"
               >
-                Sign Out
-                <LogoutIcon className="h-3 animate-bounce pl-2 lg:h-5" />
-              </button>
-            )}
+                {!address ? (
+                  <button
+                    onClick={() => {
+                      connectWithMetamask()
+                    }}
+                    className="hidden items-center justify-center bg-cyan-600 px-4 py-2 text-xs font-bold text-white hover:bg-cyan-800 lg:flex lg:px-5 lg:py-3 lg:text-base"
+                  >
+                    Metamask
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => disconnect()}
+                    className="hidden items-center justify-center bg-gray-400 px-4 py-2 text-xs font-bold text-white hover:bg-gray-500 lg:flex lg:px-5 lg:py-3 lg:text-base"
+                  >
+                    Disconnect
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    connectWithWallectconnect()
+                  }}
+                  className="flex items-center justify-center bg-cyan-600 px-4 py-2 text-xs font-bold text-white hover:bg-cyan-800 lg:px-5 lg:py-3 lg:text-base"
+                >
+                  walletConnect
+                </button>
+              </div>
+            </div>
           </header>
 
           <hr className="my-2 border" />
