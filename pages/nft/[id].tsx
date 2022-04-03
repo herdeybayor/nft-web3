@@ -274,7 +274,7 @@ const NFTDropPage = ({ collection }: Props) => {
                 ) : (
                   <button
                     onClick={() => disconnect()}
-                    className="flex items-center justify-center bg-gray-400 px-4 py-2 text-xs font-bold text-white hover:bg-gray-500 lg:px-5 lg:py-3 lg:text-base"
+                    className="hidden items-center justify-center bg-gray-400 px-4 py-2 text-xs font-bold text-white hover:bg-gray-500 lg:flex lg:px-5 lg:py-3 lg:text-base"
                   >
                     Disconnect
                   </button>
