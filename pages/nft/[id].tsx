@@ -247,9 +247,14 @@ const NFTDropPage = ({ collection }: Props) => {
                     )}
                   </span>
                 ) : (
-                  <span>
+                  <span className="flex items-center justify-center">
                     {address.substring(0, 5)}...
                     {address.substring(address.length - 5)}
+                    {!isOpen ? (
+                      <ArrowDownIcon className="ml-2 h-5" />
+                    ) : (
+                      <ArrowUpIcon className="ml-2 h-5" />
+                    )}
                   </span>
                 )}
               </div>
